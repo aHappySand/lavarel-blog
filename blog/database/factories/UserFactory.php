@@ -25,6 +25,7 @@ $factory->define(User::class, function (Faker $faker) {
         'password' => $password ?: $password = bcrypt('secret'), // password
         'remember_token' => Str::random(10),
         'is_admin' => false,
+        'activated' => true,
         'created_at' => $date_time,
         'updated_at' => $date_time
     ];
