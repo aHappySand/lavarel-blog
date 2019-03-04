@@ -172,14 +172,16 @@ input {
      margin-top: 50px;
 }
 
+.navbar-nav .dropdown-menu {
+  position: absolute;
+}
 
-
-
-
-
-
-
-
-
-
-
+/* User edit */
+.gravatar_edit{
+      margin: 15px auto;
+      text-align: center;
+      .gravatar {
+            float: none;
+            max-width: 100px;
+      }
+  }
