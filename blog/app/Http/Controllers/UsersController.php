@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Auth;
+use Mail;
 
 class UsersController extends Controller
 {
 
     public function __construct(){
         $this->middleware('auth', [
-            'except' => ['show', 'create', 'store', 'index']
+            'except' => ['show', 'create', 'store', 'index', 'confirmEmail']
         ]);
 
         $this->middleware('guest', [
@@ -46,9 +48,13 @@ class UsersController extends Controller
              'email' => $request->email,
              'password' => bcrypt($request->password)
          ]);
-         Auth::login($user);
-         session()->flash('success', '恭喜创建成功！');
-         return redirect()->intended(route('users.show', [$user]));
+         // Auth::login($user);
+        // session()->flash('success', '恭喜创建成功！');
+         //return redirect()->intended(route('users.show', [$user]));
+        
+         $this->sendEmailConfirmationTo($user);
+         session()->flash('success', '验证邮件已发往您的邮箱，请注意查收！');
+         return redirect('/');
     }
 
     public function edit(User $user)
@@ -84,5 +90,39 @@ class UsersController extends Controller
         $user->delete();
         session()->flash('success', '成功删除用户'.$user->name.'！');
         return back();
+    }
+
+    protected function sendEmailConfirmationTo($user)
+    {
+        $view = 'emails.confirm';
+        $data = compact('user');
+       
+        $from = '1254883879@qq.com';
+        $name = '系统管理员';
+
+        $to = $user->email;
+        $subject = "感谢注册 Sample应用，请确认您的邮箱！";
+
+        Mail::send($view, $data, function($message) use ($from, $name, $to, $subject){
+            $message->from($from, $name)->to($to)->subject($subject);
+        });
+    }
+
+    public function confirmEmail($token){
+        $user = User::where('activation_token', $token)->firstOrFail();
+
+        if($user){
+            $user->activated = true;
+            $user->activation_token = null;
+            $user->save();
+
+            Auth::login($user);
+
+            session()->flash('success', '恭喜激活成功！');
+            return redirect()->route('users.show', [$user]);
+        }else{
+            session()->flash('errors', '请正常激活！');
+            return redirect()->route('signup');
+        }
     }
 }
