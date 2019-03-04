@@ -6,12 +6,12 @@
                         <ul class="nav navbar-nav navbar-right">
                         @if (Auth::check())
                             <li><a href="#">用户列表</a></li>
-                            <li>
+                            <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                     {{ Auth::user()->name }} <b class="caret"></b>
                                 </a>
 
-                                <ul>
+                                <ul class="dropdown-menu">
                                     <li><a href="{{ route('users.show', Auth::user()->id) }}">个人中心</a></li>
                                     <li><a href="#">编辑资料</a></li>
                                     <li class="divider"></li>
