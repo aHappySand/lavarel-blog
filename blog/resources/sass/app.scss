@@ -204,3 +204,10 @@ input {
       position: relative;
       right: 0;
 }
+
+@media screen and (min-width: 768px){
+    .navbar-right {
+         float: right!important;
+        margin-right: -15px;
+    }
+}
